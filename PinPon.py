@@ -95,47 +95,66 @@ def menu_principal():
 
 
 def personalizar_controles():
-    global controles
     fuente = pygame.font.Font(None, 36)
+    fuente_Titulo = pygame.font.Font(None, 46)
+    fuente_instrucciones = pygame.font.Font(None, 26)
+    controles_orden = [
+        "Jugador 1 Arriba",
+        "Jugador 1 Abajo",
+        "Jugador 2 Arriba",
+        "Jugador 2 Abajo",
+        "Pausa",
+    ]
     seleccion = 0
-    opciones = list(controles.keys())
     esperando_tecla = False
+    gris_claro = (200, 200, 200)
     while True:
         pantalla.fill(NEGRO)
-        texto_titulo = fuente.render("Personalizar Controles", True, BLANCO)
+        texto_titulo = fuente_Titulo.render("Personalizar Controles", True, BLANCO)
         pantalla.blit(
-            texto_titulo, (ANCHO // 2 - texto_titulo.get_width() // 2, ALTO // 4)
+            texto_titulo, (ANCHO // 2 - texto_titulo.get_width() // 2, ALTO // 6)
         )
-        for i, opcion in enumerate(opciones):
-            texto_opcion = fuente.render(
-                f"{opcion}: {pygame.key.name(controles[opcion])}",
-                True,
-                BLANCO if i == seleccion else (150, 150, 150),
-            )
+        for i, control in enumerate(controles_orden):
+            color = AZUL if i == seleccion else BLANCO
+            texto = f"{control}: {pygame.key.name(controles[control])}"
+            if esperando_tecla and i == seleccion:
+                texto = f"{control}: Presiona una tecla..."
+            texto_renderizado = fuente.render(texto, True, color)
             pantalla.blit(
-                texto_opcion,
-                (ANCHO // 2 - texto_opcion.get_width() // 2, ALTO // 2 + i * 40),
+                texto_renderizado,
+                (ANCHO // 2 - texto_renderizado.get_width() // 2, ALTO // 3 + i * 50),
             )
+        texto_instruccion = fuente_instrucciones.render(
+            "Presiona ENTER para personalizar", True, gris_claro
+        )
+        pantalla.blit(
+            texto_instruccion,
+            (ANCHO // 2 - texto_instruccion.get_width() // 2, ALTO - 100),
+        )
+        texto_volver = fuente_instrucciones.render(
+            "Presiona ESC para volver", True, gris_claro
+        )
+        pantalla.blit(
+            texto_volver, (ANCHO // 2 - texto_volver.get_width() // 2, ALTO - 60)
+        )
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
                 pygame.quit()
                 return
-            if not esperando_tecla:
-                if evento.type == pygame.KEYDOWN:
-                    if evento.key == pygame.K_ESCAPE:
-                        return
-                    elif evento.key == pygame.K_UP:
-                        seleccion = (seleccion - 1) % len(opciones)
+            if evento.type == pygame.KEYDOWN:
+                if esperando_tecla:
+                    controles[controles_orden[seleccion]] = evento.key
+                    esperando_tecla = False
+                else:
+                    if evento.key == pygame.K_UP:
+                        seleccion = (seleccion - 1) % len(controles_orden)
                     elif evento.key == pygame.K_DOWN:
-                        seleccion = (seleccion + 1) % len(opciones)
+                        seleccion = (seleccion + 1) % len(controles_orden)
                     elif evento.key == pygame.K_RETURN:
                         esperando_tecla = True
-            else:
-                if evento.type == pygame.KEYDOWN:
-                    controles[opciones[seleccion]] = evento.key
-                    esperando_tecla = False
+                    elif evento.key == pygame.K_ESCAPE:
+                        return
         pygame.display.flip()
-        reloj.tick(FPS)
 
 
 def menu_pausa():
