@@ -12,7 +12,7 @@ Este proyecto es una implementación moderna y personalizable del clásico juego
 
 ### Controles
 
-![Captura de pantalla del juego](Imagenes/Controles.png)
+![Captura de pantalla del juego](Imagenes/M_Controles.png)
 
 ### Menu de pausa
 
